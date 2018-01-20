@@ -9,29 +9,41 @@ const server = http.createServer(app);
 const io = socketIO(server);
 const publicPath = path.join(__dirname, '../public'); //this is what you want to provide to the express status middleware
 
-const {generateMessage} = require('./utils/message');
-
+const { generateMessage, generateLocationMessage } = require('./utils/message');
 
 app.use(express.static(publicPath));
 
 io.on('connection', socket => {
-	console.log('New user connected');
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app from generate message'));
-  socket.broadcast.emit('newMessage', generateMessage("admin", 'New uesr joined'))
-	socket.on('createMessage', (message, callback) => {
+  console.log('New user connected');
+  socket.emit(
+    'newMessage',
+    generateMessage('Admin', 'Welcome to the chat app from generate message')
+  );
+  socket.broadcast.emit(
+    'newMessage',
+    generateMessage('admin', 'New uesr joined')
+  );
+  socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
-    io.emit('newMessage', generateMessage(message.from, message.text))
-    callback("This is from the server.");
-	});
-	socket.on('disconnect', () => {
-		console.log('User disconnected');
-	});
+    io.emit('newMessage', generateMessage(message.from, message.text));
+    callback('This is from the server.');
+  });
+  socket.on('createLocationMessage', coords => {
+    io.emit(
+      'newLocationMessage',
+      generateLocationMessage('Admin', coords.latitude, coords.longitude)
+    );
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
 });
 
 server.listen(port, () => {
-	console.log(
-		`Started on port ${port} & the Mongo DB is: ${process.env.MONGODB_URI}`
-	);
+  console.log(
+    `Started on port ${port} & the Mongo DB is: ${process.env.MONGODB_URI}`
+  );
 });
 
 // console.log(__dirname+'/../public'); //this doesn't look clean
