@@ -10,6 +10,7 @@ const io = socketIO(server);
 const publicPath = path.join(__dirname, '../public'); //this is what you want to provide to the express status middleware
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
+const { isRealString } = require('./utils/validation');
 
 app.use(express.static(publicPath));
 
@@ -23,6 +24,13 @@ io.on('connection', socket => {
     'newMessage',
     generateMessage('admin', 'New uesr joined')
   );
+  socket.on('join', (params, callback) => {
+    if (!isRealString(params.name) || !isRealString(params.room)) {
+      callback('Name and room name are required.');
+    }
+    callback(); //remember that in chat.js the first argument is the error
+  });
+
   socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
     io.emit('newMessage', generateMessage(message.from, message.text));
