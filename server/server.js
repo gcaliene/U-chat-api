@@ -16,18 +16,24 @@ app.use(express.static(publicPath));
 
 io.on('connection', socket => {
   console.log('New user connected');
-  socket.emit(
-    'newMessage',
-    generateMessage('Admin', 'Welcome to the chat app from generate message!')
-  );
-  socket.broadcast.emit(
-    'newMessage',
-    generateMessage('admin', 'New uesr joined')
-  );
+
   socket.on('join', (params, callback) => {
     if (!isRealString(params.name) || !isRealString(params.room)) {
       callback('Name and room name are required.');
     }
+
+    socket.join(params.room); //now we have a special place to talk for specific rooms
+
+    socket.emit(
+      'newMessage',
+      generateMessage('Admin', 'Welcome to the chat app from generate message!')
+    );
+    socket.broadcast
+      .to(params.room)
+      .emit(
+        'newMessage',
+        generateMessage('Admin', `${params.name} has joined!`)
+      );
     callback(); //remember that in chat.js the first argument is the error
   });
 
