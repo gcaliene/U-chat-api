@@ -3,23 +3,36 @@
 // getUser(id)
 // getUserList(room)
 
-//ES6 classes
-class Person {
-  constructor(name, age) {
-    // console.log(name, age);
-    this.name = name;
-    this.age = age;
+class Users {
+  constructor() {
+    this.users = [];
   }
-  getUserDescription() {
-    return `${this.name} is ${this.age} year(s) old.`;
+  addUser(id, name, room) {
+    const user = { id, name, room };
+    this.users.push(user);
+    return user;
   }
 }
+module.exports = { Users };
 
-let me = new Person('Andrew', 25);
-// console.log('this.name', me.name);
-// console.log('this.age', me.age);
-let description = me.getUserDescription();
-console.log(description);
+// //ES6 classes
+// class Person {
+//   constructor(name, age) {
+//     // console.log(name, age);
+//     this.name = name;
+//     this.age = age;
+//   }
+//   getUserDescription() {
+//     return `${this.name} is ${this.age} year(s) old.`;
+//   }
+// }
+//
+// let me = new Person('Andrew', 25);
+// // console.log('this.name', me.name);
+// // console.log('this.age', me.age);
+// let description = me.getUserDescription();
+// console.log(description);
+// // End of ES6 classes
 
 // Old way to do it
 // var users =[]
@@ -27,4 +40,3 @@ console.log(description);
 //   users.push({})
 // }
 //
-// modules.export = { addUsers}
